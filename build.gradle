@@ -26,8 +26,8 @@ def buildVersion = ENV.BUILD_NUMBER ? "1.0.0.${ENV.BUILD_NUMBER}" : "1.0.0.beta"
 
 version = "1.15.2-" + buildVersion + "-universal"
 
-group = 'com.unrealdinnerbone.tobrirsgarden' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'TobrirsGarden'
+group = 'com.unrealdinnerbone.javd' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'JAVD'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
