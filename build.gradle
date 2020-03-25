@@ -1,0 +1,106 @@
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+    }
+}
+
+plugins {
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+apply from: 'https://raw.githubusercontent.com/MinecraftModDevelopment/Gradle-Collection/master/generic/markdown-git-changelog.gradle'
+
+
+def ENV = System.getenv()
+def buildVersion = ENV.BUILD_NUMBER ? "1.0.0.${ENV.BUILD_NUMBER}" : "1.0.0.beta"
+
+version = "1.15.2-" + buildVersion + "-universal"
+
+group = 'com.unrealdinnerbone.tobrirsgarden' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'TobrirsGarden'
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+minecraft {
+    mappings channel: 'snapshot', version: "${mcp_mappings}"
+
+    if(!project.hasProperty("devWorkspace")) {
+        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    }else {
+        if(project(":zworkspace") != null) {
+            Project project = project(":zworkspace")
+            accessTransformer = project.file('src/main/resources/META-INF/accesstransformer2.cfg')
+        }
+    }
+
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'tobrirsgarden', '--all', '--output', file('src/generated/resources/')
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:1.15.2-31.1.27"
+}
+
+// Example for how to get properties into the manifest for reading by the runtime..
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "javd",
+            "Specification-Vendor": "unrealdinnerbone",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"unrealdinnerbone",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+curseforge {
+    if (project.hasProperty('unreal_curse_api_key')){
+        apiKey = project.getProperty('unreal_curse_api_key')
+    }
+    project {
+        id = "370890"
+        changelog = getGitChangelog
+        changelogType = 'markdown'
+        releaseType = 'release'
+        addGameVersion '1.15.2'
+        addGameVersion 'Forge'
+    }
+}
