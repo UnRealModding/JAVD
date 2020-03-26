@@ -41,7 +41,7 @@ public class JAVD
     public JAVD() {
         FMLJavaModLoadingContext.get().getModEventBus().register(new RegisteryEvents());
         DamageEvent.init();
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, builder.build());
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, builder.build());
 
     }
 
