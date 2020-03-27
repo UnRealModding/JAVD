@@ -32,7 +32,7 @@ public class PortalBlock extends Block {
                 if (playerEntity.getHeldItem(hand).getItem() == Items.ENDER_PEARL) {
                     if (portalTitleEnity.getLinked() != playerEntity.getUniqueID()) {
                         portalTitleEnity.setLinked(playerEntity.getUniqueID());
-                        playerEntity.sendMessage(new TranslationTextComponent("block.portal.linked", playerEntity.getDisplayName()));
+                        playerEntity.sendStatusMessage(new TranslationTextComponent("block.portal.linked", playerEntity.getDisplayName()), true);
                     }
                 } else {
                     if (portalTitleEnity.getLinked().equals(PortalTitleEnity.FAKE_ID)) {

@@ -22,9 +22,10 @@ apply from: 'https://raw.githubusercontent.com/MinecraftModDevelopment/Gradle-Co
 
 
 def ENV = System.getenv()
-def buildVersion = ENV.BUILD_NUMBER ? "1.0.0.${ENV.BUILD_NUMBER}" : "1.0.0.beta"
+def buildNumber = ENV.BUILD_NUMBER ? "${ENV.BUILD_NUMBER}" : "0"
+version = "${mod_version}+build." + buildNumber + ".minecraft." + "${minecraft_version}"
 
-version = "1.15.2-" + buildVersion + "-universal"
+archivesBaseName = "${mod_name}"
 
 group = 'com.unrealdinnerbone.javd' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'JAVD'
