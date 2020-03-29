@@ -14,15 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class LocationSaveData extends WorldSavedData {
+public class PlayerSaveData extends WorldSavedData {
 
-    private static final BlockPos ZERO = new BlockPos(0, 64, 0);
     private final HashMap<UUID, BlockPos> spawnLocations;
-    private int xLocation = 0;
-    private int zLocation = 0;
 
-    public LocationSaveData() {
-        super(JAVD.MOD_ID);
+    public PlayerSaveData() {
+        super(JAVD.MOD_ID + "_players");
         this.spawnLocations = new HashMap<>();
     }
 
@@ -37,8 +34,6 @@ public class LocationSaveData extends WorldSavedData {
             BlockPos blockPos = BlockPos.fromLong(Long.parseLong(values[1]));
             spawnLocations.put(uuid, blockPos);
         });
-        this.xLocation = nbt.getInt("x");
-        this.zLocation = nbt.getInt("z");
     }
 
     @Override
@@ -48,31 +43,24 @@ public class LocationSaveData extends WorldSavedData {
         ListNBT listNBT = new ListNBT();
         storedValues.forEach(s -> listNBT.add(StringNBT.valueOf(s)));
         compound.put("locations", listNBT);
-        compound.putInt("x", xLocation);
-        compound.putInt("z", zLocation);
         return compound;
     }
 
-    public BlockPos findPortalLocationForPlayer(UUID uuid) {
-        if(JAVD.PLAYER_VOIDS.get()) {
-            return ZERO;
-        }else {
-            if(spawnLocations.containsKey(uuid)) {
-                return spawnLocations.get(uuid);
-            }else {
-                this.xLocation += 10000;
-                this.zLocation += 10000;
-                BlockPos blockPos =  new BlockPos(xLocation, 64, zLocation);
-                spawnLocations.put(uuid, blockPos);
-                markDirty();
-                return blockPos;
-            }
+    public BlockPos getPlayersSpawnLocation(UUID uuid) {
+        return spawnLocations.getOrDefault(uuid, null);
+    }
+
+    public void setPlayersSpawnLocation(UUID uuid, BlockPos blockPos) {
+        if(this.spawnLocations.containsKey(uuid) && this.spawnLocations.get(uuid).equals(blockPos)) {
+            return;
         }
+        this.spawnLocations.put(uuid, blockPos);
+        markDirty();
     }
 
 
-    public static LocationSaveData get(ServerWorld world) {
-        return world.getServer().getWorld(DimensionType.OVERWORLD).getSavedData().getOrCreate(LocationSaveData::new, JAVD.MOD_ID);
+    public static PlayerSaveData get(ServerWorld world) {
+        return world.getServer().getWorld(DimensionType.OVERWORLD).getSavedData().getOrCreate(PlayerSaveData::new, JAVD.MOD_ID + "_players");
     }
 
     public HashMap<UUID, BlockPos> getSpawnLocations() {

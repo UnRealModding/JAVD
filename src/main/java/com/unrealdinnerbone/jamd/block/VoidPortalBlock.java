@@ -1,5 +1,6 @@
 package com.unrealdinnerbone.jamd.block;
 
+import com.unrealdinnerbone.jamd.JAVD;
 import com.unrealdinnerbone.jamd.JAVDRegistry;
 import com.unrealdinnerbone.jamd.util.TelerportUtils;
 import net.minecraft.block.Block;
@@ -25,7 +26,7 @@ public class VoidPortalBlock extends Block {
     @Override
     public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockRayTraceResult rayTraceResult) {
         if (!world.isRemote) {
-            if (playerEntity.dimension.getModType() == JAVDRegistry.VOID) {
+            if (playerEntity.world.dimension.getType() == JAVD.TYPE.apply(playerEntity.getUniqueID())) {
                 TelerportUtils.toOverworld(playerEntity);
             }
         }

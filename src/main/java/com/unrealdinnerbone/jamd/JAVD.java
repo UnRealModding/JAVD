@@ -26,11 +26,14 @@ public class JAVD
 
     private static final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec.BooleanValue ALLOW_RESPAWN = builder.comment("Allow respawning in the void dimension ").define("allowRespawn", false);
+
     public static final ForgeConfigSpec.BooleanValue PLAYER_VOIDS = builder.comment("Enabled per player void dimensions").define("perPlayerDim", false);
     public static final ForgeConfigSpec.IntValue PLATFORM_RANGE = builder.comment("The range of how many blocks out to build the platform").defineInRange("platformRange", 3, 1, 10);
 
-    public static final Supplier<DimensionType> VOID_TYPE = () -> DimensionManager.registerOrGetDimension(new ResourceLocation(JAVD.MOD_ID, "void"), JAVDRegistry.VOID, null, true);
-    public static final Function<UUID, DimensionType> PLAYER_TYPE = uuid -> DimensionManager.registerOrGetDimension(new ResourceLocation(JAVD.MOD_ID, uuid.toString().replace("-", "")), JAVDRegistry.VOID, null, true);
+    private static final Supplier<DimensionType> VOID_TYPE = () -> DimensionManager.registerOrGetDimension(new ResourceLocation(JAVD.MOD_ID, "void"), JAVDRegistry.VOID, null, true);
+    private static final Function<UUID, DimensionType> PLAYER_TYPE = uuid -> DimensionManager.registerOrGetDimension(new ResourceLocation(JAVD.MOD_ID, uuid.toString().replace("-", "")), JAVDRegistry.VOID, null, true);
+    public static final Function<UUID, DimensionType> TYPE = uuid -> PLAYER_VOIDS.get() ? PLAYER_TYPE.apply(uuid) : VOID_TYPE.get();
+
     public static final Tag<Block> GENERATOR_BLOCKS = new BlockTags.Wrapper(new ResourceLocation(JAVD.MOD_ID, "generator"));
 
 

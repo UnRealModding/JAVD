@@ -45,9 +45,20 @@ public class VoidDim extends Dimension {
     }
 
     @Override
+    public boolean isDaytime() {
+        return true;
+    }
+
+    @Override
+    public long getWorldTime() {
+        return 6000;
+    }
+
+    @Override
     public boolean isSurfaceWorld() {
         return true;
     }
+
 
     @Override
     public Vec3d getFogColor(float celestialAngle, float partialTicks) {
@@ -60,7 +71,17 @@ public class VoidDim extends Dimension {
     }
 
     @Override
+    public int getMoonPhase(long worldTime) {
+        return 0;
+    }
+
+    @Override
     public boolean doesXZShowFog(int x, int z) {
         return false;
+    }
+
+    @Override
+    public boolean hasSkyLight() {
+        return JAVD.ALLOW_SKYLIGHT.get();
     }
 }

@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -33,6 +34,7 @@ public class PortalBlock extends Block {
                     if (portalTitleEnity.getLinked() != playerEntity.getUniqueID()) {
                         portalTitleEnity.setLinked(playerEntity.getUniqueID());
                         playerEntity.sendStatusMessage(new TranslationTextComponent("block.portal.linked", playerEntity.getDisplayName()), true);
+                        return ActionResultType.CONSUME;
                     }
                 } else {
                     if (portalTitleEnity.getLinked().equals(PortalTitleEnity.FAKE_ID)) {
@@ -45,6 +47,7 @@ public class PortalBlock extends Block {
         }
         return ActionResultType.SUCCESS;
     }
+
 
     @Override
     public boolean isAir(BlockState state, IBlockReader world, BlockPos pos) {

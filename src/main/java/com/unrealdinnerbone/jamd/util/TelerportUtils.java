@@ -29,11 +29,17 @@ public class TelerportUtils {
     }
 
     public static void toOverworld(PlayerEntity playerEntity) {
-        BlockPos blockPos1 = playerEntity.getBedLocation(DimensionType.OVERWORLD);
-        if(blockPos1 == null) {
-            blockPos1 = playerEntity.getServer().getWorld(DimensionType.OVERWORLD).getSpawnPoint();
+        if(playerEntity.world instanceof ServerWorld) {
+            BlockPos theBlockPos = PlayerSaveData.get((ServerWorld) playerEntity.world).getPlayersSpawnLocation(playerEntity.getUniqueID());
+            if(theBlockPos == null) {
+                theBlockPos = playerEntity.getBedLocation(DimensionType.OVERWORLD);
+                if(theBlockPos == null) {
+                    theBlockPos = playerEntity.getServer().getWorld(DimensionType.OVERWORLD).getSpawnPoint();
+                }
+
+            }
+            teleportEntity(playerEntity, DimensionType.OVERWORLD, theBlockPos);
         }
-        teleportEntity(playerEntity, DimensionType.OVERWORLD, blockPos1);
     }
 
     public static void toVoid(PlayerEntity playerEntity) {
@@ -42,7 +48,7 @@ public class TelerportUtils {
     }
     public static void toVoid(PlayerEntity playerEntity, UUID uuid) {
         if(playerEntity.world instanceof ServerWorld) {
-            DimensionType TYPE = JAVD.PLAYER_VOIDS.get() ? JAVD.PLAYER_TYPE.apply(uuid) : JAVD.VOID_TYPE.get();
+            DimensionType TYPE = JAVD.TYPE.apply(uuid);
             ServerWorld serverWorld = (ServerWorld) playerEntity.world;
             World voidWorld = getVoidWorld(playerEntity.getServer(), TYPE);
             BlockPos theBlockPos = LocationSaveData.get(serverWorld).findPortalLocationForPlayer(uuid);
@@ -58,13 +64,16 @@ public class TelerportUtils {
                     }
                 });
             }
+            if(playerEntity.world.dimension.getType() != JAVD.TYPE.apply(playerEntity.getUniqueID())) {
+                PlayerSaveData.get(serverWorld).setPlayersSpawnLocation(uuid, playerEntity.getPosition());
+            }
             teleportEntity(playerEntity, TYPE, theBlockPos);
 
         }
     }
 
     private static Block getBlock(UUID uuid) {
-        return uuid.toString().equals("ae9c317a-cf2e-43c5-9b32-37a6ae83879f") ? Blocks.DIAMOND_BLOCK : getRandom(JAVD.GENERATOR_BLOCKS.getAllElements()).orElse(Blocks.STONE);
+        return EasterEggs.getPlayersBlock(uuid).orElse(getRandom(JAVD.GENERATOR_BLOCKS.getAllElements()).orElse(Blocks.STONE));
     }
 
 
