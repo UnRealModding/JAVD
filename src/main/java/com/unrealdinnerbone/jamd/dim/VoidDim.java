@@ -82,6 +82,6 @@ public class VoidDim extends Dimension {
 
     @Override
     public boolean hasSkyLight() {
-        return JAVD.ALLOW_SKYLIGHT.get();
+        return true;
     }
 }
