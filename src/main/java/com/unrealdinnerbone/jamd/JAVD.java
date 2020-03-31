@@ -1,7 +1,5 @@
 package com.unrealdinnerbone.jamd;
 
-import com.unrealdinnerbone.jamd.events.DamageEvent;
-import com.unrealdinnerbone.jamd.events.RegisteryEvents;
 import net.minecraft.block.Block;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
@@ -30,8 +28,8 @@ public class JAVD
     public static final ForgeConfigSpec.BooleanValue PLAYER_VOIDS = builder.comment("Enabled per player void dimensions").define("perPlayerDim", false);
     public static final ForgeConfigSpec.IntValue PLATFORM_RANGE = builder.comment("The range of how many blocks out to build the platform").defineInRange("platformRange", 3, 1, 10);
 
-    private static final Supplier<DimensionType> VOID_TYPE = () -> DimensionManager.registerOrGetDimension(new ResourceLocation(JAVD.MOD_ID, "void"), JAVDRegistry.VOID, null, true);
-    private static final Function<UUID, DimensionType> PLAYER_TYPE = uuid -> DimensionManager.registerOrGetDimension(new ResourceLocation(JAVD.MOD_ID, uuid.toString().replace("-", "")), JAVDRegistry.VOID, null, true);
+    private static final Supplier<DimensionType> VOID_TYPE = () -> DimensionManager.registerOrGetDimension(new ResourceLocation(JAVD.MOD_ID, "void"), JAVDRegistry.VOID.get(), null, true);
+    private static final Function<UUID, DimensionType> PLAYER_TYPE = uuid -> DimensionManager.registerOrGetDimension(new ResourceLocation(JAVD.MOD_ID, uuid.toString().replace("-", "")), JAVDRegistry.VOID.get(), null, true);
     public static final Function<UUID, DimensionType> TYPE = uuid -> PLAYER_VOIDS.get() ? PLAYER_TYPE.apply(uuid) : VOID_TYPE.get();
 
     public static final Tag<Block> GENERATOR_BLOCKS = new BlockTags.Wrapper(new ResourceLocation(JAVD.MOD_ID, "generator"));
@@ -42,8 +40,7 @@ public class JAVD
     private static final Logger LOGGER = LogManager.getLogger();
 
     public JAVD() {
-        FMLJavaModLoadingContext.get().getModEventBus().register(new RegisteryEvents());
-        DamageEvent.init();
+        JAVDRegistry.REGISTRIES.forEach(deferredRegister -> deferredRegister.register(FMLJavaModLoadingContext.get().getModEventBus()));
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, builder.build());
 
     }

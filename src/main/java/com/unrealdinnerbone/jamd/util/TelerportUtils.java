@@ -56,7 +56,7 @@ public class TelerportUtils {
             BlockState portalBlockState = voidWorld.getBlockState(blockPos);
             if (portalBlockState.isAir()) {
                 Block block = getBlock(uuid);
-                voidWorld.setBlockState(blockPos, JAVDRegistry.VOID_PORTAL_BLOCK.getDefaultState());
+                voidWorld.setBlockState(blockPos, JAVDRegistry.VOID_PORTAL_BLOCK.get().getDefaultState());
                 int range = JAVD.PLATFORM_RANGE.get();
                 BlockPos.getAllInBox(blockPos.add(range, 0, range), blockPos.add(-range, 0, -range)).forEach(blockPos1 -> {
                     if (voidWorld.getBlockState(blockPos1).isAir(voidWorld, blockPos1)) {

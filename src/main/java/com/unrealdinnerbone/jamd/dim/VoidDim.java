@@ -16,15 +16,17 @@ import javax.annotation.Nullable;
 
 public class VoidDim extends Dimension {
 
+    private static final Vec3d FOG_COLOR =  new Vec3d(0.75, 0.84, 1.0);
+
     public VoidDim(World world, DimensionType dimensionType) {
         super(world, dimensionType, 0);
     }
 
     @Override
     public ChunkGenerator<?> createChunkGenerator() {
-        GenerationSettings genSettings = JAVDRegistry.VOID_CHUNK.createSettings();
-        genSettings.setDefaultBlock(JAVDRegistry.PORTAL_BLOCK.getDefaultState());
-        return JAVDRegistry.VOID_CHUNK.create(this.world, BiomeProviderType.FIXED.create(BiomeProviderType.FIXED.func_226840_a_(this.world.getWorldInfo()).setBiome(JAVDRegistry.THE_VOID)), genSettings);
+        GenerationSettings genSettings = JAVDRegistry.VOID_CHUNK.get().createSettings();
+        genSettings.setDefaultBlock(JAVDRegistry.PORTAL_BLOCK.get().getDefaultState());
+        return JAVDRegistry.VOID_CHUNK.get().create(this.world, BiomeProviderType.FIXED.create(BiomeProviderType.FIXED.func_226840_a_(this.world.getWorldInfo()).setBiome(JAVDRegistry.THE_VOID.get())), genSettings);
     }
 
     @Nullable
@@ -62,7 +64,7 @@ public class VoidDim extends Dimension {
 
     @Override
     public Vec3d getFogColor(float celestialAngle, float partialTicks) {
-        return new Vec3d(0.75, 0.84, 1.0);
+        return FOG_COLOR;
     }
 
     @Override

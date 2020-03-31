@@ -12,7 +12,7 @@ public class PortalTitleEnity extends TileEntity {
     private UUID uuid;
 
     public PortalTitleEnity() {
-        super(JAVDRegistry.PORTAL);
+        super(JAVDRegistry.PORTAL.get());
         this.uuid = FAKE_ID;
     }
 
@@ -24,7 +24,6 @@ public class PortalTitleEnity extends TileEntity {
     public UUID getLinked() {
         return uuid;
     }
-
 
     @Override
     public void read(CompoundNBT tag) {
