@@ -26,6 +26,7 @@ public class JAVD
     public static final ForgeConfigSpec.BooleanValue ALLOW_RESPAWN = builder.comment("Allow respawning in the void dimension ").define("allowRespawn", false);
 
     public static final ForgeConfigSpec.BooleanValue PLAYER_VOIDS = builder.comment("Enabled per player void dimensions").define("perPlayerDim", false);
+    public static final ForgeConfigSpec.BooleanValue DISABLE_EASTER_EGGS = builder.comment("Disable easter eggs").define("disableEasterEggs", false);
     public static final ForgeConfigSpec.IntValue PLATFORM_RANGE = builder.comment("The range of how many blocks out to build the platform").defineInRange("platformRange", 3, 1, 10);
 
     private static final Supplier<DimensionType> VOID_TYPE = () -> DimensionManager.registerOrGetDimension(new ResourceLocation(JAVD.MOD_ID, "void"), JAVDRegistry.VOID.get(), null, true);
