@@ -69,17 +69,17 @@ public class TelerportUtils {
             if(playerEntity.world.dimension.getType().getModType() != JAVDRegistry.VOID.get()) {
                 PlayerSaveData.get(serverWorld).setPlayersSpawnLocation(uuid, new BlockPos(playerEntity.getPosX(), playerEntity.getPosY(), playerEntity.getPosZ()));
             }
-            teleportEntity(playerEntity, TYPE, findSaveBlockPos(voidWorld, theBlockPos));
+            teleportEntity(playerEntity, TYPE, findSafeBlockPos(voidWorld, theBlockPos));
 
         }
     }
 
 
-    private static BlockPos findSaveBlockPos(World world, BlockPos blockPos) {
-        if(world.isAirBlock(blockPos)) {
+    private static BlockPos findSafeBlockPos(World world, BlockPos blockPos) {
+        if(world.isAirBlock(blockPos) && world.isAirBlock(blockPos.up())) {
             return blockPos;
         }else {
-            return findSaveBlockPos(world, blockPos.up());
+            return findSafeBlockPos(world, blockPos.up());
         }
     }
 
