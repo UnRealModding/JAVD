@@ -5,8 +5,10 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
 
 import java.util.ArrayList;
@@ -16,8 +18,11 @@ import java.util.UUID;
 
 public class LocationSaveData extends WorldSavedData {
 
+    private static final LocationSaveData clientStorageCopy = new LocationSaveData();
+
+
     private static final BlockPos ZERO = new BlockPos(0, 64, 0);
-    private final HashMap<UUID, BlockPos> spawnLocations;
+    private final HashMap<String, BlockPos> spawnLocations;
     private int xLocation = 0;
     private int zLocation = 0;
 
@@ -33,9 +38,8 @@ public class LocationSaveData extends WorldSavedData {
         listNBT.forEach(inbt -> {
             StringNBT stringNBT = (StringNBT) inbt;
             String[] values = stringNBT.getString().split("@");
-            UUID uuid = UUID.fromString(values[0]);
             BlockPos blockPos = BlockPos.fromLong(Long.parseLong(values[1]));
-            spawnLocations.put(uuid, blockPos);
+            spawnLocations.put(values[0], blockPos);
         });
         this.xLocation = nbt.getInt("x");
         this.zLocation = nbt.getInt("z");
@@ -44,7 +48,7 @@ public class LocationSaveData extends WorldSavedData {
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         List<String> storedValues = new ArrayList<>();
-        spawnLocations.forEach((uuid, blockPos) -> storedValues.add(uuid.toString() + "@" + blockPos.toLong()));
+        spawnLocations.forEach((uuid, blockPos) -> storedValues.add(uuid + "@" + blockPos.toLong()));
         ListNBT listNBT = new ListNBT();
         storedValues.forEach(s -> listNBT.add(StringNBT.valueOf(s)));
         compound.put("locations", listNBT);
@@ -57,13 +61,13 @@ public class LocationSaveData extends WorldSavedData {
         if(JAVD.PLAYER_VOIDS.get()) {
             return ZERO;
         }else {
-            if(spawnLocations.containsKey(uuid)) {
-                return spawnLocations.get(uuid);
+            if(spawnLocations.containsKey(uuid.toString())) {
+                return spawnLocations.get(uuid.toString());
             }else {
                 this.xLocation += 10000;
                 this.zLocation += 10000;
                 BlockPos blockPos =  new BlockPos(xLocation, 64, zLocation);
-                spawnLocations.put(uuid, blockPos);
+                spawnLocations.put(uuid.toString(), blockPos);
                 markDirty();
                 return blockPos;
             }
@@ -71,11 +75,20 @@ public class LocationSaveData extends WorldSavedData {
     }
 
 
-    public static LocationSaveData get(ServerWorld world) {
-        return world.getServer().getWorld(DimensionType.OVERWORLD).getSavedData().getOrCreate(LocationSaveData::new, JAVD.MOD_ID);
+
+    public static LocationSaveData get(World world)
+    {
+        if (!(world instanceof ServerWorld))
+        {
+            return clientStorageCopy;
+        }
+
+        ServerWorld overworld = world.getServer().getWorld(DimensionType.OVERWORLD);
+        DimensionSavedDataManager storage = overworld.getSavedData();
+        return storage.getOrCreate(LocationSaveData::new, JAVD.MOD_ID);
     }
 
-    public HashMap<UUID, BlockPos> getSpawnLocations() {
+    public HashMap<String, BlockPos> getSpawnLocations() {
         return spawnLocations;
     }
 }

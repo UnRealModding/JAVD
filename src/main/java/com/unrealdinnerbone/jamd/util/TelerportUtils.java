@@ -5,10 +5,12 @@ import com.unrealdinnerbone.jamd.JAVDRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
@@ -50,7 +52,7 @@ public class TelerportUtils {
         if(playerEntity.world instanceof ServerWorld) {
             DimensionType TYPE = JAVD.TYPE.apply(uuid);
             ServerWorld serverWorld = (ServerWorld) playerEntity.world;
-            World voidWorld = getVoidWorld(playerEntity.getServer(), TYPE);
+            World voidWorld = getVoidWorld(serverWorld.getServer(), TYPE);
             BlockPos theBlockPos = LocationSaveData.get(serverWorld).findPortalLocationForPlayer(uuid);
             BlockPos blockPos = theBlockPos.down();
             BlockState portalBlockState = voidWorld.getBlockState(blockPos);
@@ -64,11 +66,20 @@ public class TelerportUtils {
                     }
                 });
             }
-            if(playerEntity.world.dimension.getType() != JAVD.TYPE.apply(playerEntity.getUniqueID())) {
-                PlayerSaveData.get(serverWorld).setPlayersSpawnLocation(uuid, playerEntity.getPosition());
+            if(playerEntity.world.dimension.getType().getModType() != JAVDRegistry.VOID.get()) {
+                PlayerSaveData.get(serverWorld).setPlayersSpawnLocation(uuid, new BlockPos(playerEntity.getPosX(), playerEntity.getPosY(), playerEntity.getPosZ()));
             }
-            teleportEntity(playerEntity, TYPE, theBlockPos);
+            teleportEntity(playerEntity, TYPE, findSaveBlockPos(voidWorld, theBlockPos));
 
+        }
+    }
+
+
+    private static BlockPos findSaveBlockPos(World world, BlockPos blockPos) {
+        if(world.isAirBlock(blockPos)) {
+            return blockPos;
+        }else {
+            return findSaveBlockPos(world, blockPos.up());
         }
     }
 
