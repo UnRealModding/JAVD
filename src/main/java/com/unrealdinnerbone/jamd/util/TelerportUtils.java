@@ -5,14 +5,10 @@ import com.unrealdinnerbone.jamd.JAVDRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 
 import java.util.Collection;
@@ -21,76 +17,58 @@ import java.util.UUID;
 
 public class TelerportUtils {
 
-    public static void teleportEntity(Entity entity, DimensionType type, BlockPos blockPos) {
-        teleportEntity(entity, type, blockPos.getX() + 0.5, blockPos.getY() + 0.75, blockPos.getZ() + 0.5);
+    public static void teleportEntity(Entity entity, ServerWorld world, double x, double y, double z) {
+        SimpleTeleporter simpleTeleporter = new SimpleTeleporter(x + 0.5, y, z + 0.5);
+        entity.changeDimension(world, simpleTeleporter);
     }
 
-    public static void teleportEntity(Entity entity, DimensionType type, double x, double y, double z) {
-        SimpleTeleporter simpleTeleporter = new SimpleTeleporter(x, y, z);
-        entity.changeDimension(type, simpleTeleporter);
-    }
-
-    public static void toOverworld(PlayerEntity playerEntity) {
-        if(playerEntity.world instanceof ServerWorld) {
-            BlockPos theBlockPos = PlayerSaveData.get((ServerWorld) playerEntity.world).getPlayersSpawnLocation(playerEntity.getUniqueID());
-            if(theBlockPos == null) {
-                theBlockPos = playerEntity.getBedLocation(DimensionType.OVERWORLD);
-                if(theBlockPos == null) {
-                    theBlockPos = playerEntity.getServer().getWorld(DimensionType.OVERWORLD).getSpawnPoint();
+    public static void toVoid(PlayerEntity playerEntity, World toWorld, BlockPos blockPos, boolean spawnPlatform) throws RuntimeException{
+        if(!toWorld.isRemote() && playerEntity.world instanceof ServerWorld && toWorld instanceof ServerWorld) {
+            BlockPos spawnPos = findPortalLocation(playerEntity.getEntityWorld(), blockPos).orElseThrow(() -> new RuntimeException("Cant find location to spawn portal"));
+            if (playerEntity.world.getBlockState(spawnPos).isAir()) {
+                Block block = getBlock(playerEntity.getUniqueID());
+                toWorld.setBlockState(spawnPos, JAVDRegistry.VOID_PORTAL_BLOCK.get().getDefaultState());
+                if(spawnPlatform) {
+                    int range = JAVD.PLATFORM_RANGE.get();
+                    BlockPos.getAllInBox(spawnPos.add(range, 0, range), spawnPos.add(-range, 0, -range)).forEach(blockPos1 -> {
+                        if (toWorld.getBlockState(blockPos1).isAir()) {
+                            toWorld.setBlockState(blockPos1, block.getDefaultState());
+                        }
+                    });
                 }
-
             }
-            teleportEntity(playerEntity, DimensionType.OVERWORLD, theBlockPos);
+            teleportEntity(playerEntity, (ServerWorld) toWorld, spawnPos.getX(), spawnPos.up().getY(), spawnPos.getZ());
         }
     }
 
-    public static void toVoid(PlayerEntity playerEntity) {
-        toVoid(playerEntity, playerEntity.getUniqueID());
 
-    }
-    public static void toVoid(PlayerEntity playerEntity, UUID uuid) {
-        if(playerEntity.world instanceof ServerWorld) {
-            DimensionType TYPE = JAVD.TYPE.apply(uuid);
-            ServerWorld serverWorld = (ServerWorld) playerEntity.world;
-            World voidWorld = getVoidWorld(serverWorld.getServer(), TYPE);
-            BlockPos theBlockPos = LocationSaveData.get(serverWorld).findPortalLocationForPlayer(uuid);
-            BlockPos blockPos = theBlockPos.down();
-            BlockState portalBlockState = voidWorld.getBlockState(blockPos);
-            if (portalBlockState.isAir()) {
-                Block block = getBlock(uuid);
-                voidWorld.setBlockState(blockPos, JAVDRegistry.VOID_PORTAL_BLOCK.get().getDefaultState());
-                int range = JAVD.PLATFORM_RANGE.get();
-                BlockPos.getAllInBox(blockPos.add(range, 0, range), blockPos.add(-range, 0, -range)).forEach(blockPos1 -> {
-                    if (voidWorld.getBlockState(blockPos1).isAir(voidWorld, blockPos1)) {
-                        voidWorld.setBlockState(blockPos1, block.getDefaultState());
+    private static Optional<BlockPos> findPortalLocation(World worldTo, BlockPos fromPos) {
+        if(isSafeSpawnLocation(worldTo, fromPos)) {
+            return Optional.of(fromPos);
+        }
+        BlockPos.Mutable mutableBlockPos = new BlockPos.Mutable(0, 0, 0);
+        for (int y = 0; y < 256; y++) {
+            for (int x = fromPos.getX() - 6; x < fromPos.getX() + 6; x++) {
+                for (int z = fromPos.getZ() - 6; z < fromPos.getZ() + 6; z++) {
+                    mutableBlockPos.setPos(x, y, z);
+                    BlockState blockState = worldTo.getBlockState(mutableBlockPos);
+                    if (blockState.isAir() && isSafeSpawnLocation(worldTo, mutableBlockPos.up())) {
+                        return Optional.of(mutableBlockPos);
                     }
-                });
+                }
             }
-            if(playerEntity.world.dimension.getType().getModType() != JAVDRegistry.VOID.get()) {
-                PlayerSaveData.get(serverWorld).setPlayersSpawnLocation(uuid, new BlockPos(playerEntity.getPosX(), playerEntity.getPosY(), playerEntity.getPosZ()));
-            }
-            teleportEntity(playerEntity, TYPE, findSafeBlockPos(voidWorld, theBlockPos));
-
         }
+        return Optional.empty();
     }
 
-
-    private static BlockPos findSafeBlockPos(World world, BlockPos blockPos) {
-        if(world.isAirBlock(blockPos) && world.isAirBlock(blockPos.up())) {
-            return blockPos;
-        }else {
-            return findSafeBlockPos(world, blockPos.up());
-        }
+    private static boolean isSafeSpawnLocation(World world, BlockPos blockPos) {
+        return world.getBlockState(blockPos).isAir() && world.getBlockState(blockPos.up()).isAir();
     }
 
     private static Block getBlock(UUID uuid) {
         return EasterEggs.getPlayersBlock(uuid).orElse(getRandom(JAVD.GENERATOR_BLOCKS.getAllElements()).orElse(Blocks.STONE));
     }
 
-
-    private static World getVoidWorld(MinecraftServer minecraftServer, DimensionType TYPE) {
-        return minecraftServer.getWorld(TYPE);
-    }
 
     private static <E> Optional<E> getRandom(Collection<E> e) {
         return e.stream().skip((int) (e.size() * Math.random())).findFirst();
