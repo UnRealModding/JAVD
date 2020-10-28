@@ -2,11 +2,13 @@ package com.unrealdinnerbone.jamd.util;
 
 import com.unrealdinnerbone.jamd.JAVD;
 import com.unrealdinnerbone.jamd.JAVDRegistry;
+import com.unrealdinnerbone.jamd.block.PortalTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -28,6 +30,10 @@ public class TelerportUtils {
             if (playerEntity.world.getBlockState(spawnPos).isAir()) {
                 Block block = getBlock(playerEntity.getUniqueID());
                 toWorld.setBlockState(spawnPos, JAVDRegistry.VOID_PORTAL_BLOCK.get().getDefaultState());
+                TileEntity tileEntity = toWorld.getTileEntity(spawnPos);
+                if(tileEntity instanceof PortalTileEntity) {
+                    ((PortalTileEntity) tileEntity).setWorldId(World.field_234918_g_.func_240901_a_());
+                }
                 if(spawnPlatform) {
                     int range = JAVD.PLATFORM_RANGE.get();
                     BlockPos.getAllInBox(spawnPos.add(range, 0, range), spawnPos.add(-range, 0, -range)).forEach(blockPos1 -> {
