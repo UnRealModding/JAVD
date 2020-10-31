@@ -1,4 +1,4 @@
-package com.unrealdinnerbone.jamd.util;
+package com.unrealdinnerbone.javd.util;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.world.server.ServerWorld;

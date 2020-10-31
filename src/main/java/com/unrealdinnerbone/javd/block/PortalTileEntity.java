@@ -9,6 +9,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
+import javax.print.attribute.standard.Sides;
 
 public class PortalTileEntity extends TileEntity {
 
@@ -20,7 +21,6 @@ public class PortalTileEntity extends TileEntity {
 
     public void setWorldId(ResourceLocation worldId) {
         this.worldId = worldId;
-        markDirty();
     }
 
     public ResourceLocation getWorldId() {
@@ -36,7 +36,7 @@ public class PortalTileEntity extends TileEntity {
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         if(nbt.contains("world_id")) {
-            worldId = ResourceLocation.tryCreate("world_id");
+            worldId = tryCreate(nbt.getString("world_id"));
         }
         super.read(state, nbt);
     }
@@ -54,7 +54,7 @@ public class PortalTileEntity extends TileEntity {
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         CompoundNBT nbt = pkt.getNbtCompound();
         if(nbt.contains("world_id")) {
-            worldId = ResourceLocation.tryCreate("world_id");
+            worldId = tryCreate(nbt.getString("world_id"));
         }
 
     }
@@ -64,5 +64,14 @@ public class PortalTileEntity extends TileEntity {
         CompoundNBT compoundNBT = new CompoundNBT();
         compoundNBT.putString("world_id", worldId.toString());
         return compoundNBT;
+    }
+
+    public static ResourceLocation tryCreate(String name) {
+        try {
+            ResourceLocation resourceLocation = new ResourceLocation(name);
+            return resourceLocation;
+        }catch (Exception e) {
+            return null;
+        }
     }
 }

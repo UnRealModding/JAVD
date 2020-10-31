@@ -5,9 +5,11 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
+        maven { url "https://dist.creeper.host/Sponge/maven" }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 
@@ -17,6 +19,7 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 
 apply from: 'https://raw.githubusercontent.com/MinecraftModDevelopment/Gradle-Collection/master/generic/markdown-git-changelog.gradle'
 apply from: "https://raw.githubusercontent.com/UnRealDinnerbone/GradleHelpers/master/version.gradle"
@@ -27,7 +30,7 @@ def theMappings_Version = findLocalProperty("mcp_mappings")
 
 version = getVersionNumber()
 
-group = 'com.unrealdinnerbone.javad' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'com.unrealdinnerbone.javad'
 archivesBaseName = 'JAVD'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -44,10 +47,12 @@ minecraft {
 
     runs {
         client {
+            args '--mixin.config', 'javd.mixins.json'
             workingDirectory project.file('client')
             mods.add(projectMod)
         }
         server {
+            args '--mixin.config', 'javd.mixins.json'
             workingDirectory project.file('server')
             mods.add(projectMod)
         }
@@ -65,9 +70,10 @@ String findLocalProperty(String name) {
 jar {
     manifest {
         attributes([
+                "MixinConfigs": "javd.mixins.json",
                 "Specification-Title": "${archivesBaseName}",
                 "Specification-Vendor": "UnRealDinnerbone",
-                "Specification-Version": "${theMinecraft_version}", // We are version 1 of ourselves
+                "Specification-Version": "${theMinecraft_version}",
                 "Implementation-Title":  "${archivesBaseName}",
                 "Implementation-Version": "${version}",
                 "Implementation-Vendor" :"UnRealDinnerbone",
@@ -88,4 +94,8 @@ curseforge {
         addGameVersion minecraft_version
         addGameVersion 'Forge'
     }
+}
+
+mixin {
+    add sourceSets.main, "javd.refmap.json"
 }
