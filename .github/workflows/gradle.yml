@@ -24,7 +24,7 @@ jobs:
       run: |
         chmod +x gradlew
         ./gradlew --stop
-        ./gradlew clean runData
+        ./gradlew clean runData --no-daemon
     - uses: actions/upload-artifact@v2
       with:
         name: Artifacts
