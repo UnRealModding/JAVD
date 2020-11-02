@@ -79,14 +79,6 @@ sourceSets.main.resources {
     srcDirs 'src/generated/resources'
 }
 
-task deleteCahceFile(type: Delete) {
-    delete project.file("src/generated/resources/.cache")
-}
-
-compileJava{
-    dependsOn deleteCahceFile
-}
-
 jar {
     manifest {
         attributes([
