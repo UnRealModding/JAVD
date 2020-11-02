@@ -30,6 +30,7 @@ public class PortalBlock extends Block {
     public PortalBlock() {
         super(AbstractBlock.Properties.create(Material.ROCK).harvestLevel(2));
     }
+
     @Override
     public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockRayTraceResult rayTraceResult) {
         if (!world.isRemote) {

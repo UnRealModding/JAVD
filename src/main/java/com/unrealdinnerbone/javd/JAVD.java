@@ -1,6 +1,7 @@
 package com.unrealdinnerbone.javd;
 
 import com.unrealdinnerbone.javd.block.PortalTileEntity;
+import com.unrealdinnerbone.javd.data.DataEvent;
 import com.unrealdinnerbone.javd.util.ListUtil;
 import com.unrealdinnerbone.javd.util.WorldUtils;
 import net.minecraft.block.Block;
@@ -35,6 +36,7 @@ public class JAVD
         JAVDRegistry.REGISTRIES.forEach(deferredRegister -> deferredRegister.register(FMLJavaModLoadingContext.get().getModEventBus()));
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, builder.build());
         MinecraftForge.EVENT_BUS.addListener(JAVD::onWrenched);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(DataEvent::onData);
     }
 
     public static void onWrenched(PlayerInteractEvent.RightClickBlock event) {

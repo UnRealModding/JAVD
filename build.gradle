@@ -59,6 +59,11 @@ minecraft {
             workingDirectory project.file('server')
             mods.add(projectMod)
         }
+        data {
+            workingDirectory project.file('data')
+            args '--mod', 'javd', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            mods.add(projectMod)
+        }
     }
 }
 
@@ -68,6 +73,18 @@ dependencies {
 
 String findLocalProperty(String name) {
     return this.getRootProject().property(name)
+}
+
+sourceSets.main.resources {
+    srcDirs 'src/generated/resources'
+}
+
+task deleteCahceFile(type: Delete) {
+    delete project.file("src/generated/resources/.cache")
+}
+
+compileJava{
+    dependsOn deleteCahceFile
 }
 
 jar {
