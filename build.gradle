@@ -13,6 +13,9 @@ buildscript {
     }
 }
 
+import net.minecraftforge.gradle.common.task.SignJar
+
+
 plugins {
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'java'
@@ -81,6 +84,26 @@ jar {
         ])
     }
 }
+
+task signJar(type: SignJar, dependsOn: jar) {
+    if(System.getenv().get("file_name") != null) {
+        File file = new File(System.getenv().get("file_name"))
+        if (!file.exists()) {
+            new URL(System.getenv().get("url")).withInputStream { i -> file.withOutputStream { it << i } }
+        }
+        keyStore = file.path
+        alias = System.getenv().get("alias")
+        storePass = System.getenv().get("storePass")
+        keyPass = System.getenv().get("keyPass")
+        inputFile = jar.archivePath
+        outputFile = jar.archivePath
+        doLast {
+            file.delete()
+        }
+    }
+}
+
+build.dependsOn signJar
 
 curseforge {
     if (project.hasProperty('unreal_curse_api_key')){

@@ -13,9 +13,9 @@ public class SimpleTeleporter implements ITeleporter
     private final double z;
 
     public SimpleTeleporter(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.x = x + 0.5;
+        this.y = y + 0.5;
+        this.z = z + 0.5;
     }
 
     @Override

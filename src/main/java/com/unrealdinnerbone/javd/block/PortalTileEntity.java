@@ -1,6 +1,6 @@
-package com.unrealdinnerbone.jamd.block;
+package com.unrealdinnerbone.javd.block;
 
-import com.unrealdinnerbone.jamd.JAVDRegistry;
+import com.unrealdinnerbone.javd.JAVDRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
@@ -9,7 +9,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
-import javax.print.attribute.standard.Sides;
 
 public class PortalTileEntity extends TileEntity {
 
@@ -36,7 +35,7 @@ public class PortalTileEntity extends TileEntity {
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         if(nbt.contains("world_id")) {
-            worldId = tryCreate(nbt.getString("world_id"));
+            worldId = ResourceLocation.tryCreate(nbt.getString("world_id"));
         }
         super.read(state, nbt);
     }
@@ -54,7 +53,7 @@ public class PortalTileEntity extends TileEntity {
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         CompoundNBT nbt = pkt.getNbtCompound();
         if(nbt.contains("world_id")) {
-            worldId = tryCreate(nbt.getString("world_id"));
+            worldId = ResourceLocation.tryCreate(nbt.getString("world_id"));
         }
 
     }
@@ -66,12 +65,4 @@ public class PortalTileEntity extends TileEntity {
         return compoundNBT;
     }
 
-    public static ResourceLocation tryCreate(String name) {
-        try {
-            ResourceLocation resourceLocation = new ResourceLocation(name);
-            return resourceLocation;
-        }catch (Exception e) {
-            return null;
-        }
-    }
 }
