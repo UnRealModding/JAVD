@@ -119,6 +119,7 @@ task signJar(type: SignJar, dependsOn: jar) {
 build.dependsOn signJar
 
 curseforge {
+    if(System.getenv().hasProperty('unreal_curse_api_key'))
     apiKey = System.getenv().get('unreal_curse_api_key')
     project {
         id = project.property("curseforge_id")
