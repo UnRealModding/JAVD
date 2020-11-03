@@ -25,6 +25,7 @@ jobs:
         chmod +x gradlew
         ./gradlew --stop
         ./gradlew clean
+        ./gradlew --do-daemon
         ./gradlew runData
     - uses: actions/upload-artifact@v2
       with:
