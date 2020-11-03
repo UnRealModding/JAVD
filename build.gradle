@@ -67,7 +67,7 @@ minecraft {
     }
 }
 
-if(runData != null) {
+if(tasks.getByName("runData") != null) {
     build.dependsOn runData
 }
 
