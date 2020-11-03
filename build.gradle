@@ -67,7 +67,9 @@ minecraft {
     }
 }
 
-build.dependsOn runData
+if(runData != null) {
+    build.dependsOn runData
+}
 
 dependencies {
     minecraft "net.minecraftforge:forge:${theMinecraft_version}-${theForge_Version}"
