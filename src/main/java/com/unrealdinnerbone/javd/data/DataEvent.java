@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.unrealdinnerbone.javd.JAVD;
 import com.unrealdinnerbone.javd.JAVDRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.data.*;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.item.Items;
@@ -35,6 +36,36 @@ public class DataEvent {
         event.getGenerator().addProvider(new BlockState(event.getGenerator(), event.getExistingFileHelper()));
         event.getGenerator().addProvider(new Item(event.getGenerator(), event.getExistingFileHelper()));
         event.getGenerator().addProvider(new LootTable(event.getGenerator()));
+        event.getGenerator().addProvider(new BlockTag(event.getGenerator(),event.getExistingFileHelper()));
+    }
+
+    public static class BlockTag extends BlockTagsProvider {
+
+        public BlockTag(DataGenerator generatorIn, ExistingFileHelper fileHelper) {
+            super(generatorIn, JAVD.MOD_ID, fileHelper);
+        }
+
+        @Override
+        protected void registerTags() {
+            getOrCreateBuilder(JAVD.GENERATOR_BLOCKS)
+                    .add(Blocks.WHITE_CONCRETE)
+                    .add(Blocks.ORANGE_CONCRETE)
+                    .add(Blocks.MAGENTA_CONCRETE)
+                    .add(Blocks.LIGHT_BLUE_CONCRETE)
+                    .add(Blocks.YELLOW_CONCRETE)
+                    .add(Blocks.LIME_CONCRETE)
+                    .add(Blocks.PINK_CONCRETE)
+                    .add(Blocks.GRAY_CONCRETE)
+                    .add(Blocks.LIGHT_GRAY_CONCRETE)
+                    .add(Blocks.CYAN_CONCRETE)
+                    .add(Blocks.PURPLE_CONCRETE)
+                    .add(Blocks.BLUE_CONCRETE)
+                    .add(Blocks.BROWN_CONCRETE)
+                    .add(Blocks.GREEN_CONCRETE)
+                    .add(Blocks.RED_CONCRETE)
+                    .add(Blocks.BLACK_CONCRETE);
+
+        }
     }
 
     public static class LootTable extends ForgeLootTableProvider {

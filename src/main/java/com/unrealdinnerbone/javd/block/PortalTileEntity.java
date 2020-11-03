@@ -23,12 +23,16 @@ public class PortalTileEntity extends TileEntity {
     }
 
     public ResourceLocation getWorldId() {
-        return worldId;
+        if(worldId == null) {
+            return new ResourceLocation("minecraft", "empty");
+        }else {
+            return worldId;
+        }
     }
 
     @Override
     public CompoundNBT write(CompoundNBT compound) {
-        compound.putString("world_id", worldId.toString());
+        compound.putString("world_id", getTheWorldId());
         return super.write(compound);
     }
 
@@ -45,7 +49,7 @@ public class PortalTileEntity extends TileEntity {
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         CompoundNBT compoundNBT = new CompoundNBT();
-        compoundNBT.putString("world_id", worldId.toString());
+        compoundNBT.putString("world_id", getTheWorldId());
         return new SUpdateTileEntityPacket(getPos(), 0, compoundNBT);
     }
 
@@ -58,10 +62,14 @@ public class PortalTileEntity extends TileEntity {
 
     }
 
+    public String getTheWorldId() {
+        return worldId == null ? "" : worldId.toString();
+    }
+
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT compoundNBT = new CompoundNBT();
-        compoundNBT.putString("world_id", worldId.toString());
+        compoundNBT.putString("world_id", getTheWorldId());
         return compoundNBT;
     }
 
