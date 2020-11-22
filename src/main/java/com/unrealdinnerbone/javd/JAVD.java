@@ -45,16 +45,18 @@ public class JAVD
                 BlockPos blockPos = event.getPos();
                 World world = event.getWorld();
                 TileEntity tileEntity = world.getTileEntity(blockPos);
-                if (tileEntity instanceof PortalTileEntity) {
-                    PortalTileEntity portalTileEntity = (PortalTileEntity) tileEntity;
-                    ListUtil.next(WorldUtils.WORLDS.get(), portalTileEntity.getWorldId().toString()).ifPresent(s -> {
-                        portalTileEntity.setWorldId(new ResourceLocation(s));
-                        portalTileEntity.markDirty();
-                        event.getPlayer().sendStatusMessage(new StringTextComponent("Set portal id " + s), true);
-                        event.setCanceled(true);
-                    });
-                } else {
-                    throw new RuntimeException("Error tile not there?");
+                if(world.getBlockState(blockPos).getBlock() == JAVDRegistry.PORTAL_BLOCK.get()) {
+                    if (tileEntity instanceof PortalTileEntity) {
+                        PortalTileEntity portalTileEntity = (PortalTileEntity) tileEntity;
+                        ListUtil.next(WorldUtils.WORLDS.get(), portalTileEntity.getWorldId().toString()).ifPresent(s -> {
+                            portalTileEntity.setWorldId(new ResourceLocation(s));
+                            portalTileEntity.markDirty();
+                            event.getPlayer().sendStatusMessage(new StringTextComponent("Set portal id " + s), true);
+                            event.setCanceled(true);
+                        });
+                    } else {
+                        throw new RuntimeException("Error tile not there?");
+                    }
                 }
             }
         }
