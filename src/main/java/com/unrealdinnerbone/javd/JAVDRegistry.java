@@ -24,9 +24,12 @@ public class JAVDRegistry {
     public static final List<DeferredRegister<?>> REGISTRIES = Arrays.asList(BLOCKS, ITEMS, TILES);
 
 
-    public static final RegistryObject<PortalBlock> PORTAL_BLOCK = BLOCKS.register("portal_block", PortalBlock::new);
+    public static final RegistryObject<PortalBlock> PORTAL_BLOCK = BLOCKS.register("portal_block", () -> new PortalBlock("void"));
+
+    public static final RegistryObject<PortalBlock> MINE_PORTAL_BLOCK = BLOCKS.register("mine_portal_block", () -> new PortalBlock("mining"));
 
     public static final RegistryObject<Item> PORTAL_BLOCK_ITEM = ITEMS.register("portal_block", () -> new BlockItem(PORTAL_BLOCK.get(), new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<Item> MINE_PORTAL_BLOCK_ITEM = ITEMS.register("mine_portal_block", () -> new BlockItem(MINE_PORTAL_BLOCK.get(), new Item.Properties().group(ItemGroup.TRANSPORTATION)));
 
 
     public static final RegistryObject<TileEntityType<PortalTileEntity>> PORTAL = TILES.register("portal", () -> TileEntityType.Builder.create(PortalTileEntity::new, PORTAL_BLOCK.get()).build(null));

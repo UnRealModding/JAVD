@@ -10,15 +10,12 @@ import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootParameterSet;
 import net.minecraft.loot.LootParameterSets;
-import net.minecraft.loot.LootTable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeLootTableProvider;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +23,6 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 
 public class DataEvent {
@@ -84,11 +80,13 @@ public class DataEvent {
             @Override
             public void addTables() {
                 registerDropSelfLootTable(JAVDRegistry.PORTAL_BLOCK.get());
+                registerDropSelfLootTable(JAVDRegistry.MINE_PORTAL_BLOCK.get());
             }
 
             protected Iterable<Block> getKnownBlocks() {
                 List<Block> blocks = new ArrayList<>();
                 blocks.add(JAVDRegistry.PORTAL_BLOCK.get());
+                blocks.add(JAVDRegistry.MINE_PORTAL_BLOCK.get());
                 return blocks;
             }
 
@@ -105,6 +103,7 @@ public class DataEvent {
         @Override
         protected void registerModels() {
             itemGenerated(JAVDRegistry.PORTAL_BLOCK_ITEM.get(), new ResourceLocation(JAVD.MOD_ID, "block/portal_block"));
+            itemGenerated(JAVDRegistry.MINE_PORTAL_BLOCK_ITEM.get(), new ResourceLocation(JAVD.MOD_ID, "block/mine_portal_block"));
         }
 
         public void itemGenerated(net.minecraft.item.Item item, ResourceLocation texture) {
@@ -123,6 +122,7 @@ public class DataEvent {
         @Override
         protected void registerStatesAndModels() {
             simpleBlock(JAVDRegistry.PORTAL_BLOCK.get());
+            simpleBlock(JAVDRegistry.MINE_PORTAL_BLOCK.get());
         }
     }
 
@@ -139,8 +139,17 @@ public class DataEvent {
                     .patternLine("OEO")
                     .patternLine("OOO")
                     .key('O', Tags.Items.OBSIDIAN)
-                    .key('E', Items.ENDER_EYE)
-                    .addCriterion("has_eye", hasItem(Items.ENDER_EYE))
+                    .key('E', Items.ENDER_PEARL)
+                    .addCriterion("has_eye", hasItem(Items.ENDER_PEARL))
+                    .addCriterion("has_obsidian", hasItem(Items.OBSIDIAN))
+                    .build(consumer);
+            ShapedRecipeBuilder.shapedRecipe(JAVDRegistry.MINE_PORTAL_BLOCK_ITEM::get)
+                    .patternLine("OOO")
+                    .patternLine("OEO")
+                    .patternLine("OOO")
+                    .key('O', Tags.Items.OBSIDIAN)
+                    .key('E', Items.DIAMOND_PICKAXE)
+                    .addCriterion("has_pick", hasItem(Items.DIAMOND_PICKAXE))
                     .addCriterion("has_obsidian", hasItem(Items.OBSIDIAN))
                     .build(consumer);
         }

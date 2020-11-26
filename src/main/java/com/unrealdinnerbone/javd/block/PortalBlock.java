@@ -1,9 +1,8 @@
 package com.unrealdinnerbone.javd.block;
 
+import com.unrealdinnerbone.javd.JAVD;
 import com.unrealdinnerbone.javd.JAVDRegistry;
-import com.unrealdinnerbone.javd.util.ListUtil;
 import com.unrealdinnerbone.javd.util.TelerportUtils;
-import com.unrealdinnerbone.javd.util.WorldUtils;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -27,15 +26,18 @@ import java.util.Optional;
 
 public class PortalBlock extends Block {
 
-    public PortalBlock() {
+    private final ResourceLocation worldId;
+
+    public PortalBlock(String name) {
         super(AbstractBlock.Properties.create(Material.ROCK).harvestLevel(2));
+        this.worldId = new ResourceLocation(JAVD.MOD_ID, name);
     }
 
     @Override
     public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockRayTraceResult rayTraceResult) {
         if (!world.isRemote) {
             try {
-                TelerportUtils.teleport(playerEntity, getWorldFromTileEntity(world, blockPos).orElseThrow(() -> new RuntimeException("Invalid world ID set")), blockPos, true);
+                TelerportUtils.teleport(this, playerEntity, getWorldFromTileEntity(world, blockPos).orElseThrow(() -> new RuntimeException("Invalid world ID set")), blockPos, true);
             } catch (Exception e) {
                 playerEntity.sendStatusMessage(new StringTextComponent(e.getMessage()), false);
             }
@@ -53,7 +55,7 @@ public class PortalBlock extends Block {
                     if(!worldIn.getDimensionKey().equals(World.OVERWORLD)) {
                         portalTileEntity.setWorldId(World.OVERWORLD.getLocation());
                     }else {
-                        ListUtil.getFirstValue(WorldUtils.WORLDS.get()).ifPresent(worldId -> portalTileEntity.setWorldId(new ResourceLocation(worldId)));
+                        portalTileEntity.setWorldId(worldId);
                     }
                     portalTileEntity.markDirty();
                 }
@@ -62,8 +64,8 @@ public class PortalBlock extends Block {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
 
-    public static void placeBlock(World world, BlockPos blockPos, RegistryKey<World> portalTo) {
-        world.setBlockState(blockPos, JAVDRegistry.PORTAL_BLOCK.get().getDefaultState());
+    public static void placeBlock(Block block, World world, BlockPos blockPos, RegistryKey<World> portalTo) {
+        world.setBlockState(blockPos, block.getDefaultState());
         TileEntity tileEntity = world.getTileEntity(blockPos);
         if(tileEntity instanceof PortalTileEntity) {
             ((PortalTileEntity) tileEntity).setWorldId(portalTo.getLocation());

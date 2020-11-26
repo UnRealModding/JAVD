@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 public class TelerportUtils {
 
 
-    public static void teleport(PlayerEntity playerEntity, World toWorld, BlockPos blockPos, boolean spawnPlatform) throws RuntimeException {
+    public static void teleport(Block clickedBlock, PlayerEntity playerEntity, World toWorld, BlockPos blockPos, boolean spawnPlatform) throws RuntimeException {
         if(!toWorld.isRemote() && playerEntity.world instanceof ServerWorld && toWorld instanceof ServerWorld) {
-            BlockPos portalLocation = findPortalLocation(playerEntity.getEntityWorld(), blockPos).orElseThrow(() -> new RuntimeException("Cant find location to spawn portal"));
+            BlockPos portalLocation = findPortalLocation(toWorld, blockPos).orElseThrow(() -> new RuntimeException("Cant find location to spawn portal"));
             if (toWorld.getBlockState(portalLocation).isAir()) {
                 Block block = ListUtil.getRandom(JAVD.GENERATOR_BLOCKS.getAllElements()).orElse(Blocks.STONE);
                 if(spawnPlatform && toWorld.getBlockState(portalLocation).isAir()) {
@@ -33,7 +33,7 @@ public class TelerportUtils {
                         }
                     });
                 }
-                PortalBlock.placeBlock(toWorld, portalLocation, playerEntity.world.getDimensionKey());
+                PortalBlock.placeBlock(clickedBlock, toWorld, portalLocation, playerEntity.world.getDimensionKey());
             }
             playerEntity.changeDimension((ServerWorld) toWorld, new SimpleTeleporter(portalLocation.getX(), portalLocation.up().getY(), portalLocation.getZ()));
         }
