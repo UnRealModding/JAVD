@@ -4,8 +4,11 @@ import com.unrealdinnerbone.javd.data.DataEvent;
 import net.minecraft.block.Block;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -25,7 +28,14 @@ public class JAVD
     public JAVD() {
         JAVDRegistry.REGISTRIES.forEach(deferredRegister -> deferredRegister.register(FMLJavaModLoadingContext.get().getModEventBus()));
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, builder.build());
+        MinecraftForge.EVENT_BUS.addListener(this::onThing);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(DataEvent::onData);
+    }
+
+    public void onThing(BiomeLoadingEvent biomeLoadingEvent) {
+        if(biomeLoadingEvent.getName().toString().equals("javd:mining")) {
+            biomeLoadingEvent.setCategory(Biome.Category.NONE);
+        }
     }
 
 }
