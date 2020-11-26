@@ -36,7 +36,7 @@ public class JAVD
 
     public void onThing(BiomeLoadingEvent biomeLoadingEvent) {
         if(biomeLoadingEvent.getName().toString().equals("javd:mining")) {
-            biomeLoadingEvent.setCategory(Biome.Category.NONE);
+            biomeLoadingEvent.setCategory(Biome.Category.PLAINS);
             biomeLoadingEvent.getGeneration().getStructures().clear();
         }
     }
