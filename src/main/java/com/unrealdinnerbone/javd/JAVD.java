@@ -9,6 +9,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -29,7 +30,7 @@ public class JAVD
         JAVDRegistry.REGISTRIES.forEach(deferredRegister -> deferredRegister.register(FMLJavaModLoadingContext.get().getModEventBus()));
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, builder.build());
         MinecraftForge.EVENT_BUS.addListener(this::onThing);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(DataEvent::onData);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.HIGHEST, DataEvent::onData);
     }
 
     public void onThing(BiomeLoadingEvent biomeLoadingEvent) {
