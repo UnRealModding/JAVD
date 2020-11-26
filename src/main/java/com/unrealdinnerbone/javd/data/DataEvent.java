@@ -80,13 +80,11 @@ public class DataEvent {
             @Override
             public void addTables() {
                 registerDropSelfLootTable(JAVDRegistry.PORTAL_BLOCK.get());
-                registerDropSelfLootTable(JAVDRegistry.MINE_PORTAL_BLOCK.get());
             }
 
             protected Iterable<Block> getKnownBlocks() {
                 List<Block> blocks = new ArrayList<>();
                 blocks.add(JAVDRegistry.PORTAL_BLOCK.get());
-                blocks.add(JAVDRegistry.MINE_PORTAL_BLOCK.get());
                 return blocks;
             }
 
@@ -103,7 +101,6 @@ public class DataEvent {
         @Override
         protected void registerModels() {
             itemGenerated(JAVDRegistry.PORTAL_BLOCK_ITEM.get(), new ResourceLocation(JAVD.MOD_ID, "block/portal_block"));
-            itemGenerated(JAVDRegistry.MINE_PORTAL_BLOCK_ITEM.get(), new ResourceLocation(JAVD.MOD_ID, "block/mine_portal_block"));
         }
 
         public void itemGenerated(net.minecraft.item.Item item, ResourceLocation texture) {
@@ -122,7 +119,6 @@ public class DataEvent {
         @Override
         protected void registerStatesAndModels() {
             simpleBlock(JAVDRegistry.PORTAL_BLOCK.get());
-            simpleBlock(JAVDRegistry.MINE_PORTAL_BLOCK.get());
         }
     }
 
@@ -141,15 +137,6 @@ public class DataEvent {
                     .key('O', Tags.Items.OBSIDIAN)
                     .key('E', Items.ENDER_PEARL)
                     .addCriterion("has_eye", hasItem(Items.ENDER_PEARL))
-                    .addCriterion("has_obsidian", hasItem(Items.OBSIDIAN))
-                    .build(consumer);
-            ShapedRecipeBuilder.shapedRecipe(JAVDRegistry.MINE_PORTAL_BLOCK_ITEM::get)
-                    .patternLine("OOO")
-                    .patternLine("OEO")
-                    .patternLine("OOO")
-                    .key('O', Tags.Items.OBSIDIAN)
-                    .key('E', Items.DIAMOND_PICKAXE)
-                    .addCriterion("has_pick", hasItem(Items.DIAMOND_PICKAXE))
                     .addCriterion("has_obsidian", hasItem(Items.OBSIDIAN))
                     .build(consumer);
         }

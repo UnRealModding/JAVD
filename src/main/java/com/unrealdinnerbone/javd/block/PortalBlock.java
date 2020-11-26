@@ -1,7 +1,6 @@
 package com.unrealdinnerbone.javd.block;
 
 import com.unrealdinnerbone.javd.JAVD;
-import com.unrealdinnerbone.javd.JAVDRegistry;
 import com.unrealdinnerbone.javd.util.TelerportUtils;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -26,11 +25,10 @@ import java.util.Optional;
 
 public class PortalBlock extends Block {
 
-    private final ResourceLocation worldId;
+    private static final ResourceLocation ID = new ResourceLocation(JAVD.MOD_ID, "void");
 
-    public PortalBlock(String name) {
+    public PortalBlock() {
         super(AbstractBlock.Properties.create(Material.ROCK).harvestLevel(2));
-        this.worldId = new ResourceLocation(JAVD.MOD_ID, name);
     }
 
     @Override
@@ -55,7 +53,7 @@ public class PortalBlock extends Block {
                     if(!worldIn.getDimensionKey().equals(World.OVERWORLD)) {
                         portalTileEntity.setWorldId(World.OVERWORLD.getLocation());
                     }else {
-                        portalTileEntity.setWorldId(worldId);
+                        portalTileEntity.setWorldId(ID);
                     }
                     portalTileEntity.markDirty();
                 }

@@ -9,7 +9,6 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 
@@ -22,7 +21,6 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.spongepowered.mixin'
 
 apply from: 'https://raw.githubusercontent.com/MinecraftModDevelopment/Gradle-Collection/master/generic/markdown-git-changelog.gradle'
 apply from: "https://raw.githubusercontent.com/UnRealDinnerbone/GradleHelpers/master/version.gradle"
@@ -50,18 +48,16 @@ minecraft {
 
     runs {
         client {
-            args '--mixin.config', 'javd.mixins.json'
             workingDirectory project.file('client')
             mods.add(projectMod)
         }
         server {
-            args '--mixin.config', 'javd.mixins.json'
             workingDirectory project.file('server')
             mods.add(projectMod)
         }
         data {
             workingDirectory project.file('data')
-            args '--mod', 'javd', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', archivesBaseName.toString().toLowerCase(), '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             mods.add(projectMod)
         }
     }
@@ -86,7 +82,6 @@ sourceSets.main.resources {
 jar {
     manifest {
         attributes([
-                "MixinConfigs": "javd.mixins.json",
                 "Specification-Title": "${archivesBaseName}",
                 "Specification-Vendor": "UnRealDinnerbone",
                 "Specification-Version": "${theMinecraft_version}",
@@ -129,8 +124,4 @@ curseforge {
         addGameVersion minecraft_version
         addGameVersion 'Forge'
     }
-}
-
-mixin {
-    add sourceSets.main, "javd.refmap.json"
 }
