@@ -32,6 +32,6 @@
   "precipitation": "none",
   "temperature": 1.0,
   "downfall": 1.0,
-  "category": "none",
+  "category": "plains",
   "depth": 0.0
 }
