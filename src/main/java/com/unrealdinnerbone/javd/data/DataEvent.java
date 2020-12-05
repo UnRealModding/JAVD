@@ -100,14 +100,8 @@ public class DataEvent {
 
         @Override
         protected void registerModels() {
-            itemGenerated(JAVDRegistry.PORTAL_BLOCK_ITEM.get(), new ResourceLocation(JAVD.MOD_ID, "block/portal_block"));
+            cubeAll(JAVDRegistry.PORTAL_BLOCK_ITEM.get().getRegistryName().getPath(),new ResourceLocation(JAVD.MOD_ID, "block/portal_block"));
         }
-
-        public void itemGenerated(net.minecraft.item.Item item, ResourceLocation texture) {
-            getBuilder(item.getRegistryName().getPath()).parent(getExistingFile(mcLoc("item/generated")))
-                    .texture("layer0", texture);
-        }
-
     }
 
     public static class BlockState extends BlockStateProvider {

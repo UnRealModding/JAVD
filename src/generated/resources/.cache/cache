@@ -1,6 +1,6 @@
 b91967b0a4d40ccc8532ef51260332c68725884b assets/javd/blockstates/portal_block.json
 8ce54e0ed51b9df18d1ace09beaaf4c296f08ee0 assets/javd/models/block/portal_block.json
-33539f899e5613aa828a4d77d8cf24cf99357561 assets/javd/models/item/portal_block.json
+8ce54e0ed51b9df18d1ace09beaaf4c296f08ee0 assets/javd/models/item/portal_block.json
 c48e7038979babbbdbcc9a1944cbe1650a3880e3 data/javd/advancements/recipes/transportation/portal_block.json
 e7c25e42963ab45cdfea1024dbc09a43a2245a6d data/javd/loot_tables/blocks/portal_block.json
 27a77fad6239221eee93eb51344969bf51fd59f4 data/javd/recipes/portal_block.json
