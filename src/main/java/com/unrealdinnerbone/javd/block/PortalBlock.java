@@ -5,6 +5,7 @@ import com.unrealdinnerbone.javd.util.TelerportUtils;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,6 +21,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 
 import java.util.Optional;
 
@@ -28,7 +30,7 @@ public class PortalBlock extends Block {
     private static final ResourceLocation ID = new ResourceLocation(JAVD.MOD_ID, "void");
 
     public PortalBlock() {
-        super(AbstractBlock.Properties.create(Material.ROCK).harvestLevel(2));
+        super(AbstractBlock.Properties.create(Material.ROCK).setRequiresTool().hardnessAndResistance(5.0F, 6.0F).sound(SoundType.STONE));
     }
 
     @Override
@@ -39,8 +41,10 @@ public class PortalBlock extends Block {
             } catch (Exception e) {
                 playerEntity.sendStatusMessage(new StringTextComponent(e.getMessage()), false);
             }
+            return ActionResultType.SUCCESS;
+        }else {
+            return ActionResultType.FAIL;
         }
-        return ActionResultType.SUCCESS;
     }
 
     @Override
