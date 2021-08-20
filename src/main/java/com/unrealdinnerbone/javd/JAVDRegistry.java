@@ -25,9 +25,9 @@ public class JAVDRegistry {
 
     public static final RegistryObject<PortalBlock> PORTAL_BLOCK = BLOCKS.register("portal_block", PortalBlock::new);
 
-    public static final RegistryObject<Item> PORTAL_BLOCK_ITEM = ITEMS.register("portal_block", () -> new BlockItem(PORTAL_BLOCK.get(), new Item.Properties().group(ItemGroup.TRANSPORTATION)));
+    public static final RegistryObject<Item> PORTAL_BLOCK_ITEM = ITEMS.register("portal_block", () -> new BlockItem(PORTAL_BLOCK.get(), new Item.Properties().tab(ItemGroup.TAB_TRANSPORTATION)));
 
-    public static final RegistryObject<TileEntityType<PortalTileEntity>> PORTAL = TILES.register("portal", () -> TileEntityType.Builder.create(PortalTileEntity::new, PORTAL_BLOCK.get()).build(null));
+    public static final RegistryObject<TileEntityType<PortalTileEntity>> PORTAL = TILES.register("portal", () -> TileEntityType.Builder.of(PortalTileEntity::new, PORTAL_BLOCK.get()).build(null));
 
 
 }

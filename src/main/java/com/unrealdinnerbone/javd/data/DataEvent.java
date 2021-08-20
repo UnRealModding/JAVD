@@ -42,8 +42,8 @@ public class DataEvent {
         }
 
         @Override
-        protected void registerTags() {
-            getOrCreateBuilder(JAVD.GENERATOR_BLOCKS)
+        protected void addTags() {
+            tag(JAVD.GENERATOR_BLOCKS)
                     .add(Blocks.WHITE_CONCRETE)
                     .add(Blocks.ORANGE_CONCRETE)
                     .add(Blocks.MAGENTA_CONCRETE)
@@ -60,7 +60,6 @@ public class DataEvent {
                     .add(Blocks.GREEN_CONCRETE)
                     .add(Blocks.RED_CONCRETE)
                     .add(Blocks.BLACK_CONCRETE);
-
         }
     }
 
@@ -79,7 +78,7 @@ public class DataEvent {
 
             @Override
             public void addTables() {
-                registerDropSelfLootTable(JAVDRegistry.PORTAL_BLOCK.get());
+                dropSelf(JAVDRegistry.PORTAL_BLOCK.get());
             }
 
             protected Iterable<Block> getKnownBlocks() {
@@ -123,16 +122,16 @@ public class DataEvent {
         }
 
         @Override
-        protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
-            ShapedRecipeBuilder.shapedRecipe(JAVDRegistry.PORTAL_BLOCK_ITEM::get)
-                    .patternLine("OOO")
-                    .patternLine("OEO")
-                    .patternLine("OOO")
-                    .key('O', Tags.Items.OBSIDIAN)
-                    .key('E', Items.ENDER_PEARL)
-                    .addCriterion("has_eye", hasItem(Items.ENDER_PEARL))
-                    .addCriterion("has_obsidian", hasItem(Items.OBSIDIAN))
-                    .build(consumer);
+        protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+            ShapedRecipeBuilder.shaped(JAVDRegistry.PORTAL_BLOCK_ITEM::get)
+                    .pattern("OOO")
+                    .pattern("OEO")
+                    .pattern("OOO")
+                    .define('O', Tags.Items.OBSIDIAN)
+                    .define('E', Items.ENDER_PEARL)
+                    .unlockedBy("has_eye", has(Items.ENDER_PEARL))
+                    .unlockedBy("has_obsidian", has(Items.OBSIDIAN))
+                    .save(consumer);
         }
     }
 }
