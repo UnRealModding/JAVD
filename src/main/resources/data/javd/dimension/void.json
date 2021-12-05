@@ -1,12 +1,15 @@
 {
+  "type": "javd:void",
   "generator": {
-    "type": "minecraft:noise",
-    "biome_source": {
-      "type": "minecraft:fixed",
-      "biome": "javd:void"
-    },
-    "seed": 0,
-    "settings": "javd:void"
-  },
-  "type": "javd:void"
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "javd:void",
+      "lakes": false,
+      "features": false,
+      "layers": [],
+      "structures": {
+        "structures": {}
+      }
+    }
+  }
 }

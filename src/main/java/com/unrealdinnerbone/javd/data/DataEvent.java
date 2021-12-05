@@ -3,19 +3,25 @@ package com.unrealdinnerbone.javd.data;
 import com.mojang.datafixers.util.Pair;
 import com.unrealdinnerbone.javd.JAVD;
 import com.unrealdinnerbone.javd.JAVDRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.data.*;
-import net.minecraft.data.loot.BlockLootTables;
-import net.minecraft.item.Items;
-import net.minecraft.loot.LootParameterSet;
-import net.minecraft.loot.LootParameterSets;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.loot.BlockLoot;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeLootTableProvider;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,18 +69,18 @@ public class DataEvent {
         }
     }
 
-    public static class LootTable extends ForgeLootTableProvider {
+    public static class LootTable extends LootTableProvider {
 
         public LootTable(DataGenerator gen) {
             super(gen);
         }
 
         @Override
-        protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, net.minecraft.loot.LootTable.Builder>>>, LootParameterSet>> getTables() {
-            return Collections.singletonList(Pair.of(BlockLootTable::new, LootParameterSets.BLOCK));
+        protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, net.minecraft.world.level.storage.loot.LootTable.Builder>>>, LootContextParamSet>> getTables() {
+            return Collections.singletonList(Pair.of(BlockLootTable::new, LootContextParamSets.BLOCK));
         }
 
-        public static class BlockLootTable extends BlockLootTables {
+        public static class BlockLootTable extends BlockLoot {
 
             @Override
             public void addTables() {
@@ -82,9 +88,7 @@ public class DataEvent {
             }
 
             protected Iterable<Block> getKnownBlocks() {
-                List<Block> blocks = new ArrayList<>();
-                blocks.add(JAVDRegistry.PORTAL_BLOCK.get());
-                return blocks;
+                return Collections.singleton(JAVDRegistry.PORTAL_BLOCK.get());
             }
 
 
@@ -122,7 +126,7 @@ public class DataEvent {
         }
 
         @Override
-        protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+        protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
             ShapedRecipeBuilder.shaped(JAVDRegistry.PORTAL_BLOCK_ITEM::get)
                     .pattern("OOO")
                     .pattern("OEO")
