@@ -35,7 +35,7 @@ public class TelerportUtils {
                         }
                     });
                 }
-                PortalBlock.placeBlock(clickedBlock, toWorld, portalLocation, playerEntity.level.dimension());
+                toWorld.setBlockAndUpdate(portalLocation, JAVDRegistry.PORTAL_BLOCK.get().defaultBlockState());
             }
             playerEntity.changeDimension((ServerLevel) toWorld, new SimpleTeleporter(portalLocation.getX(), portalLocation.above().getY(), portalLocation.getZ()));
         }

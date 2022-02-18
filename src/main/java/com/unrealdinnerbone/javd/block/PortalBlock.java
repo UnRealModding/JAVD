@@ -34,7 +34,11 @@ public class PortalBlock extends Block implements EntityBlock {
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide()) {
             try {
-                TelerportUtils.teleport(this, player, getWorldFromTileEntity(level, pos).orElseThrow(() -> new RuntimeException("Invalid world ID set")), pos, true);
+                if(level.dimension().location().equals(JAVD.DIM_ID)) {
+                    TelerportUtils.teleport(this, player, JAVD.getMainWorld(level.getServer()).orElseThrow(() -> new RuntimeException("Can't find world with id " + JAVD.getMainWorld())), pos, false);
+                }else {
+                    TelerportUtils.teleport(this, player, JAVD.getVoidWorld(level.getServer()).orElseThrow(() -> new RuntimeException("Error getting mining dimension")), pos, true);
+                }
             } catch (Exception e) {
                 player.displayClientMessage(new TextComponent(e.getMessage()), false);
             }
@@ -44,40 +48,6 @@ public class PortalBlock extends Block implements EntityBlock {
         }
     }
 
-    @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        if(!level.isClientSide()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if(blockEntity instanceof PortalTileEntity portalTileEntity) {
-                if(portalTileEntity.getWorldId() != null) {
-                    if(!level.dimension().equals(Level.OVERWORLD)) {
-                        portalTileEntity.setWorldId(Level.OVERWORLD.location());
-                    }else {
-                        portalTileEntity.setWorldId(JAVD.DIM_ID);
-                    }
-                    portalTileEntity.setChanged();
-                }
-            }
-        }
-        super.setPlacedBy(level, pos, state, placer, stack);
-    }
-
-    public static void placeBlock(Block block, Level level, BlockPos blockPos, ResourceKey<Level> portalTo) {
-        level.setBlockAndUpdate(blockPos, block.defaultBlockState());
-        if(level.getBlockEntity(blockPos) instanceof PortalTileEntity blockEntity) {
-            blockEntity.setWorldId(portalTo.location());
-            blockEntity.setChanged();
-        }
-    }
-
-    public static Optional<Level> getWorldFromTileEntity(Level level, BlockPos blockPos) {
-        if (level.getBlockEntity(blockPos) instanceof PortalTileEntity portalTileEntity) {
-            if (portalTileEntity.getWorldId() != null) {
-                return Optional.ofNullable(level.getServer().getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, portalTileEntity.getWorldId())));
-            }
-        }
-        return Optional.empty();
-    }
 
 
     @Nullable

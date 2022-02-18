@@ -11,10 +11,12 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
@@ -26,6 +28,7 @@ import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -66,7 +69,11 @@ public class DataEvent {
                     .add(Blocks.GREEN_CONCRETE)
                     .add(Blocks.RED_CONCRETE)
                     .add(Blocks.BLACK_CONCRETE);
+
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(JAVDRegistry.PORTAL_BLOCK.get());
+            tag(BlockTags.NEEDS_DIAMOND_TOOL).add(JAVDRegistry.PORTAL_BLOCK.get());
         }
+
     }
 
     public static class LootTable extends LootTableProvider {
@@ -91,6 +98,11 @@ public class DataEvent {
                 return Collections.singleton(JAVDRegistry.PORTAL_BLOCK.get());
             }
 
+
+        }
+
+        @Override
+        protected void validate(Map<ResourceLocation, net.minecraft.world.level.storage.loot.LootTable> map, ValidationContext validationtracker) {
 
         }
     }
