@@ -2,12 +2,11 @@ package com.unrealdinnerbone.javd.util;
 
 import com.unrealdinnerbone.javd.JAVD;
 import com.unrealdinnerbone.javd.JAVDRegistry;
-import com.unrealdinnerbone.javd.block.PortalBlock;
 import com.unrealdinnerbone.javd.block.PortalTileEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -26,7 +25,13 @@ public class TelerportUtils {
         if(!toWorld.isClientSide() && playerEntity.level instanceof ServerLevel && toWorld instanceof ServerLevel) {
             BlockPos portalLocation = findPortalLocation(toWorld, blockPos).orElseThrow(() -> new RuntimeException("Cant find location to spawn portal"));
             if (toWorld.getBlockState(portalLocation).isAir()) {
-                Block block = ListUtil.getRandom(JAVD.GENERATOR_BLOCKS.getValues()).orElse(Blocks.STONE);
+                Block block = Registry.BLOCK.getTag(JAVD.GENERATOR_BLOCKS)
+                        .map(named -> named.getRandomElement(toWorld.getRandom()))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .map(Holder::value)
+                        .orElse(Blocks.STONE);
+
                 if(spawnPlatform && toWorld.getBlockState(portalLocation).isAir()) {
                     int range = JAVD.PLATFORM_RANGE.get();
                     BlockPos.betweenClosedStream(portalLocation.offset(range, 0, range), portalLocation.offset(-range, 0, -range)).forEach(blockPos1 -> {

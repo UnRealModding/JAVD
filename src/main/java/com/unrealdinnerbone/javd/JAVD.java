@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -30,7 +31,7 @@ public class JAVD
 
     public static final ResourceLocation DIM_ID = new ResourceLocation(MOD_ID, "void");
 
-    public static final Tags.IOptionalNamedTag<Block> GENERATOR_BLOCKS = BlockTags.createOptional(new ResourceLocation(JAVD.MOD_ID, "generator"));
+    public static final TagKey<Block> GENERATOR_BLOCKS = BlockTags.create(new ResourceLocation(JAVD.MOD_ID, "generator"));
 
     public JAVD() {
         JAVDRegistry.REGISTRIES.forEach(deferredRegister -> deferredRegister.register(FMLJavaModLoadingContext.get().getModEventBus()));
