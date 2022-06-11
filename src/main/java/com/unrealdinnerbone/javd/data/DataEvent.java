@@ -3,6 +3,7 @@ package com.unrealdinnerbone.javd.data;
 import com.mojang.datafixers.util.Pair;
 import com.unrealdinnerbone.javd.JAVD;
 import com.unrealdinnerbone.javd.JAVDRegistry;
+import net.minecraft.core.Registry;
 import net.minecraft.data.*;
 import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.data.loot.LootTableProvider;
@@ -13,8 +14,10 @@ import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
@@ -24,6 +27,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeLootTableProvider;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,11 +41,13 @@ import java.util.function.Supplier;
 public class DataEvent {
 
     public static void onData(GatherDataEvent event) {
-        event.getGenerator().addProvider(new Recipe(event.getGenerator()));
-        event.getGenerator().addProvider(new BlockState(event.getGenerator(), event.getExistingFileHelper()));
-        event.getGenerator().addProvider(new Item(event.getGenerator(), event.getExistingFileHelper()));
-        event.getGenerator().addProvider(new LootTable(event.getGenerator()));
-        event.getGenerator().addProvider(new BlockTag(event.getGenerator(),event.getExistingFileHelper()));
+        event.getGenerator().addProvider(true, new Recipe(event.getGenerator()));
+        event.getGenerator().addProvider(true, new BlockState(event.getGenerator(), event.getExistingFileHelper()));
+        event.getGenerator().addProvider(true, new Item(event.getGenerator(), event.getExistingFileHelper()));
+        event.getGenerator().addProvider(true, new LootTable(event.getGenerator()));
+        event.getGenerator().addProvider(true, new BlockTag(event.getGenerator(),event.getExistingFileHelper()));
+        event.getGenerator().addProvider(true, new CodecTypedGenerator<>(event.getGenerator(), JAVD.MOD_ID, ForgeRegistries.Keys.BIOMES, Biome.DIRECT_CODEC));
+        event.getGenerator().addProvider(true, new CodecTypedGenerator<>(event.getGenerator(), JAVD.MOD_ID, Registry.DIMENSION_TYPE_REGISTRY, DimensionType.DIRECT_CODEC));
     }
 
     public static class BlockTag extends BlockTagsProvider {
@@ -115,7 +121,8 @@ public class DataEvent {
 
         @Override
         protected void registerModels() {
-            cubeAll(JAVDRegistry.PORTAL_BLOCK_ITEM.get().getRegistryName().getPath(),new ResourceLocation(JAVD.MOD_ID, "block/portal_block"));
+            ResourceLocation location = ForgeRegistries.ITEMS.getKey(JAVDRegistry.PORTAL_BLOCK_ITEM.get());
+            cubeAll(location.getPath(),new ResourceLocation(JAVD.MOD_ID, "block/portal_block"));
         }
     }
 

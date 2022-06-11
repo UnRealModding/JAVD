@@ -25,6 +25,7 @@ public class TelerportUtils {
         if(!toWorld.isClientSide() && playerEntity.level instanceof ServerLevel && toWorld instanceof ServerLevel) {
             BlockPos portalLocation = findPortalLocation(toWorld, blockPos).orElseThrow(() -> new RuntimeException("Cant find location to spawn portal"));
             if (toWorld.getBlockState(portalLocation).isAir()) {
+                Registry.BLOCK.getTagOrEmpty(JAVD.GENERATOR_BLOCKS);
                 Block block = Registry.BLOCK.getTag(JAVD.GENERATOR_BLOCKS)
                         .map(named -> named.getRandomElement(toWorld.getRandom()))
                         .filter(Optional::isPresent)
@@ -56,12 +57,11 @@ public class TelerportUtils {
         return Optional.ofNullable(ChunkPos.rangeClosed(worldTo.getChunkAt(fromPos).getPos(), range)
                 .map(chunkPos -> worldTo.getChunk(chunkPos.x, chunkPos.z).getBlockEntitiesPos())
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList()).stream()
                 .filter(pos -> worldTo.getBlockEntity(pos) instanceof PortalTileEntity)
                 .findFirst()
                 .orElseGet(() -> {
                     BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(0, 0, 0);
-                    for (int y = worldTo.getMinBuildHeight(); y < worldTo.getMaxBuildHeight(); y++) {
+                    for (int y = 64; y < worldTo.getMaxBuildHeight(); y++) {
                         for (int x = fromPos.getX() - 6; x < fromPos.getX() + 6; x++) {
                             for (int z = fromPos.getZ() - 6; z < fromPos.getZ() + 6; z++) {
                                 mutableBlockPos.set(x, y, z);
