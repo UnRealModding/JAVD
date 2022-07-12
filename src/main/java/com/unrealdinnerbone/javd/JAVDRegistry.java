@@ -32,7 +32,7 @@ public class JAVDRegistry {
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, JAVD.MOD_ID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, JAVD.MOD_ID);
-    private static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, JAVD.MOD_ID);
+    private static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, JAVD.MOD_ID);
 
     private static final DeferredRegister<Biome> BIOMES = DeferredRegister.create(ForgeRegistries.Keys.BIOMES, JAVD.MOD_ID);
 
